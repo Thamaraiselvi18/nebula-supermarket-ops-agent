@@ -852,11 +852,11 @@ Only `.env.example` should be committed.
 
 ### Telegram Bot
 
-[🤖 Open Nebula Kirana Bot](Nebula Supermarket Ops)
+[🤖 Open Nebula Kirana Bot](https://t.me/NebulaSupermarketOpsBot)
 
 ### Demo Video
 
-[▶️ Watch the Full Demo]((https://drive.google.com/file/d/1N0M1fr9OoNwWEb1IFUOx7Q23I6OvCLIp/view?usp=sharing))
+[▶️ Watch the Full Demo](https://drive.google.com/file/d/1N0M1fr9OoNwWEb1IFUOx7Q23I6OvCLIp/view?usp=sharing)
 
 ---
 
