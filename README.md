@@ -13,7 +13,7 @@ Store Owner
  Telegram
      │
      ▼
- AI Agent (Claude)
+ AI Agent (gemini)
      │
      ▼
  Tool Orchestration
