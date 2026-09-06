@@ -1,98 +1,108 @@
+Aama bro. **Company reviewer open pannumbodhu first 30 seconds-la project oda technical depth puriyanum** nu வைத்து README-ah position pannuvom.
 
-# 🛒 Nebula Kirana — Supermarket Ops Agent
+Nee current `README.md`-a **full replace** panni, idha direct-ah paste pannidu:
 
-> AI-powered Telegram-based Supermarket Operations Agent for Indian Kirana Stores.
+````md
+# Nebula Kirana — AI-Powered Supermarket Operations Agent
 
-Nebula Kirana is a conversational AI agent designed to help Indian kirana store owners manage day-to-day supermarket operations directly through Telegram.
+> A production-oriented AI agent for running Indian kirana store operations through a single Telegram conversation.
 
-The system combines:
+Nebula Kirana is a conversational supermarket operations system that combines **AI agent orchestration, backend engineering, database persistence, deterministic business logic, financial calculations, transactional safety, and document automation** into one Telegram-based product.
 
-- AI agent orchestration
-- Inventory management
-- Conversational billing
-- GST-aware invoicing
-- Cash / UPI / Card payment recording
-- Khata / credit ledger
-- Daily business closing
-- Sales analysis
-- PDF invoice generation
-- PowerPoint analysis deck generation
-- Persistent preferences
-- SQLite database persistence
-- Idempotency and transaction safeguards
-
-**The chat is the product.**
-
-There is no separate admin dashboard or web UI required for normal store operations.
-
----
-
-# 🎯 Project Objective
-
-The goal of Nebula Kirana is to provide a simple conversational interface for supermarket operations.
-
-Instead of navigating through multiple forms and dashboards, a store owner can simply send natural-language messages through Telegram.
-
-Examples:
+Instead of building separate dashboards and forms for inventory, billing, customer credit, analytics, and reporting, the store owner interacts with the system using natural language.
 
 ```text
-show me all products
+Store Owner
+     │
+     ▼
+ Telegram
+     │
+     ▼
+ AI Agent
+     │
+     ▼
+ Tool Orchestration
+     │
+ ┌───┼────────┬──────────┬──────────┐
+ ▼   ▼        ▼          ▼          ▼
+Stock Billing Khata   Analytics   Memory
+ │     │       │          │          │
+ └─────┴───────┴──────────┴──────────┘
+                 │
+                 ▼
+              SQLite
+                 │
+        ┌────────┴────────┐
+        ▼                 ▼
+   Invoice PDF        Analysis PPTX
+        │                 │
+        └────────┬────────┘
+                 ▼
+              Telegram
 ````
 
-```text
-How much Maggi is available?
-```
+## Why This Project
 
-```text
-Create a bill for 2 Maggi and 1 Tata Salt
-```
+This project focuses on solving a real business workflow rather than building a simple chatbot.
 
-```text
-Add 20 Tata Salt to stock
-```
+The system demonstrates:
 
-```text
-Show Ramesh khata
-```
+* AI agent and tool orchestration
+* Natural-language business workflows
+* Backend application development
+* SQL database design
+* Transaction-safe operations
+* Inventory consistency
+* Financial calculation correctness
+* GST and HSN handling
+* Customer credit management
+* Idempotency
+* Persistent application state
+* PDF and PowerPoint generation
+* Telegram API integration
+* Secure environment configuration
 
-```text
-Close today's business
-```
+The core engineering principle is:
 
-```text
-Generate sales analysis deck
-```
-
-The AI agent interprets the request and selects the appropriate business tool.
-
----
-
-# ✨ Key Features
-
-## 🧠 AI Agent
-
-* Natural-language supermarket assistant
-* AI-driven tool selection
-* Multi-step tool execution
-* Conversational clarification
-* Persistent preferences
-* Agent-first architecture
-* No large regex-based intent router
-
-The model is responsible for understanding and orchestrating the request.
-
-Deterministic business tools are responsible for enforcing business rules.
+> **The model orchestrates. The tools enforce. The database persists.**
 
 ---
 
-# 📦 Inventory Management
+# Key Capabilities
+
+## AI Agent
+
+The application uses an AI agent to understand natural-language requests and select the appropriate tools.
+
+Example:
+
+```text
+"Create a bill for 2 Maggi and 1 Tata Salt"
+```
+
+The agent can determine that it needs to:
+
+1. Identify the requested products
+2. Create a draft bill
+3. Add the requested quantities
+4. Calculate the bill
+5. Wait for further edits or confirmation
+6. Finalize the transaction
+7. Update inventory
+8. Generate an invoice
+
+The application does not rely on a large regex or `if/else` intent router.
+
+---
+
+# Inventory Management
 
 The inventory system supports:
 
+* Product creation
 * Product listing
 * Stock queries
 * Stock receiving
-* New product creation
 * Low-stock detection
 * Reorder levels
 * Cost price
@@ -100,7 +110,8 @@ The inventory system supports:
 * MRP
 * GST rate
 * HSN code
-* Product units
+* Multiple units
+* Loose and packaged products
 
 Supported units include:
 
@@ -114,9 +125,7 @@ dozen
 piece
 ```
 
-The system supports both packaged and loose grocery products.
-
-### Sample Products
+Sample inventory:
 
 ```text
 Aashirvaad Atta 5kg
@@ -131,11 +140,55 @@ Loose Rice
 Loose Dal
 ```
 
+Example commands:
+
+```text
+show me all products
+```
+
+```text
+show low stock items
+```
+
+```text
+How much Maggi is available?
+```
+
+```text
+Add 20 Tata Salt to stock
+```
+
 ---
 
-# 🧾 Conversational Billing
+# Conversational Billing
 
-Users can create bills naturally.
+Billing is implemented as a controlled multi-step workflow rather than a single database insert.
+
+```text
+CREATE
+  │
+  ▼
+DRAFT
+  │
+  ├── Add Item
+  ├── Remove Item
+  └── Edit Quantity
+  │
+  ▼
+UPDATED DRAFT
+  │
+  ▼
+VALIDATE
+  │
+  ▼
+FINALIZE
+  │
+  ▼
+STOCK UPDATE
+  │
+  ▼
+INVOICE
+```
 
 Example:
 
@@ -143,7 +196,7 @@ Example:
 Create a bill for 2 Maggi and 1 Tata Salt
 ```
 
-The billing system maintains:
+The bill maintains:
 
 * Product
 * Quantity
@@ -155,48 +208,42 @@ The billing system maintains:
 * Taxable amount
 * CGST
 * SGST
+* Tax
 * Total
 
 ---
 
-# 🔄 Draft → Edit → Finalize
+# Draft Bill Safety
 
-Billing follows a controlled multi-stage workflow.
-
-```text
-CREATE BILL
-     │
-     ▼
-   DRAFT
-     │
-     ├── Add item
-     ├── Remove item
-     └── Edit quantity
-     │
-     ▼
- UPDATED DRAFT
-     │
-     ▼
- FINALIZE
-     │
-     ▼
- STOCK DEDUCTION
-     │
-     ▼
- INVOICE
-```
-
-### Important
-
-Stock is **not deducted when a draft is created**.
+Stock is **not deducted when a draft bill is created**.
 
 Stock is deducted only after successful finalization.
 
-This prevents inventory corruption while the user is still editing the bill.
+This allows users to modify the bill without corrupting inventory.
+
+Example:
+
+```text
+Create a bill for 2 Maggi and 1 Tata Salt
+```
+
+Then:
+
+```text
+Change Maggi quantity to 3
+```
+
+Then:
+
+```text
+Remove Tata Salt
+```
+
+Only after finalization does the inventory transaction take place.
 
 ---
 
-# 🛡️ Oversell Protection
+# Oversell Protection
 
 The billing layer validates stock before finalization.
 
@@ -204,36 +251,50 @@ The billing layer validates stock before finalization.
 Requested Quantity
         │
         ▼
-Available Stock Check
+Available Stock
         │
-   ┌────┴────┐
-   │         │
-   ▼         ▼
-Enough     Not Enough
-Stock        Stock
-   │           │
-   ▼           ▼
-Allow Sale   Reject Sale
+    ┌───┴────┐
+    │        │
+ Enough   Insufficient
+    │        │
+    ▼        ▼
+ Continue   Reject
 ```
 
-The system does not allow the user to sell more quantity than is available.
+The AI model cannot simply decide that a sale is valid.
 
-This rule is enforced inside the business layer instead of relying only on the AI model.
+The business tool checks the actual database state before committing the transaction.
+
+This keeps inventory rules deterministic.
 
 ---
 
-# 🧮 GST & Tax Calculation
+# Transaction-Safe Finalization
 
-GST is calculated separately for each bill item.
-
-Each product stores:
+Critical billing operations are executed using database transactions.
 
 ```text
-GST Rate
-HSN Code
+BEGIN TRANSACTION
+       │
+       ├── Validate Bill
+       ├── Validate Stock
+       ├── Calculate GST
+       ├── Record Payment
+       ├── Deduct Stock
+       ├── Record Stock Movement
+       └── Mark Bill Finalized
+                │
+                ▼
+             COMMIT
 ```
 
-The calculation flow is:
+If a critical operation fails before the transaction is committed, the database can roll back the operation instead of leaving partially updated business data.
+
+---
+
+# GST & Financial Calculations
+
+GST is calculated per bill item using the product's configured GST rate and HSN code.
 
 ```text
 Product Price
@@ -247,16 +308,16 @@ Taxable Amount
      ▼
 GST Calculation
      │
-   ┌─┴─┐
-   ▼   ▼
- CGST SGST
-   │   │
-   └─┬─┘
+ ┌───┴───┐
+ ▼       ▼
+CGST    SGST
+ │       │
+ └───┬───┘
      ▼
  Total GST
      │
      ▼
- Final Amount
+Final Amount
 ```
 
 For intra-state transactions:
@@ -265,9 +326,7 @@ For intra-state transactions:
 GST = CGST + SGST
 ```
 
-Financial calculations are internally represented using integer paise.
-
-Example:
+Financial values are represented internally using integer paise.
 
 ```text
 ₹100.00
@@ -275,11 +334,11 @@ Example:
 10000 paise
 ```
 
-This reduces floating-point precision issues during financial calculations.
+This avoids common floating-point precision problems in monetary calculations.
 
 ---
 
-# 💳 Payment Management
+# Payments
 
 Supported payment modes:
 
@@ -289,7 +348,7 @@ UPI
 Card
 ```
 
-Payment references can also be stored.
+Payment references can also be recorded.
 
 Example:
 
@@ -298,21 +357,20 @@ Finalize the bill and pay by UPI
 Reference: UPI123456
 ```
 
-No real payment gateway is connected.
-
-Payments are recorded as business transactions only.
+No real payment gateway is connected. Payment information is recorded as part of the store transaction.
 
 ---
 
-# 📒 Khata / Credit Ledger
+# Khata / Customer Credit
 
-Nebula Kirana supports customer credit management.
+The system includes a customer credit ledger.
 
-Capabilities:
+It supports:
 
 * Customer lookup
-* Credit entry
-* Payment entry
+* Customer creation
+* Credit entries
+* Payment entries
 * Outstanding balance
 * Customer ledger
 
@@ -330,15 +388,15 @@ Add ₹500 credit for Ramesh
 Ramesh paid ₹300 by UPI
 ```
 
-Ledger entries are persisted in SQLite.
+All ledger entries are persisted in SQLite.
 
 ---
 
-# 📊 Daily Close
+# Daily Close
 
-The daily-close feature summarizes the day's business.
+The daily-close workflow summarizes store activity.
 
-It can provide:
+It can include:
 
 * Total bills
 * Total sales
@@ -358,11 +416,11 @@ Close today's business
 
 ---
 
-# 📈 Sales Analysis
+# Sales Analysis
 
-The system provides sales analysis using persisted business data.
+Sales analysis is generated from persisted business data.
 
-Examples:
+Example:
 
 ```text
 Show today's sales analysis
@@ -372,22 +430,22 @@ Show today's sales analysis
 Analyze this week's sales
 ```
 
-The analysis tools read sales and inventory data from the database.
+The analytics layer reads actual bills, bill items, and inventory information from the database rather than relying on the AI model to invent business numbers.
 
 ---
 
-# 📄 GST Invoice PDF
+# Invoice PDF Automation
 
-Nebula Kirana generates real invoice PDF files.
+The application generates real invoice PDFs using PDFKit.
 
-The invoice can contain:
+Generated invoices can include:
 
 * Shop name
 * GSTIN
 * Bill number
 * Date
-* Customer name
-* Product name
+* Customer
+* Product
 * Quantity
 * Unit
 * Unit price
@@ -401,13 +459,19 @@ The invoice can contain:
 * Payment mode
 * Payment reference
 
-The generated PDF is sent directly through Telegram.
+Example:
+
+```text
+Generate invoice PDF
+```
+
+The generated PDF is sent back to the user through Telegram.
 
 ---
 
-# 📊 Sales Analysis PPTX
+# PowerPoint Analysis Automation
 
-The system can generate a PowerPoint analysis deck from store data.
+The application can generate a PowerPoint sales analysis deck using PptxGenJS.
 
 Example:
 
@@ -415,13 +479,15 @@ Example:
 Generate sales analysis deck
 ```
 
-The deck is generated using PptxGenJS and delivered to Telegram.
+The deck is generated from store data and delivered directly through Telegram.
+
+This demonstrates automated business reporting rather than only text-based AI responses.
 
 ---
 
-# 🧠 Persistent Memory
+# Persistent Memory
 
-The agent supports persistent shop preferences.
+The system stores shop preferences in the database.
 
 Example:
 
@@ -429,185 +495,109 @@ Example:
 Remember that my shop name is Nebula Kirana
 ```
 
-Preferences are stored in the database.
+The preference is persisted and can be reused later.
 
-They can be reused across future conversations and sessions.
+```text
+User
+ │
+ ▼
+AI Agent
+ │
+ ▼
+Memory Tool
+ │
+ ▼
+SQLite
+ │
+ ▼
+Future Conversation
+```
 
 ---
 
-# 🏗️ SYSTEM ARCHITECTURE
+# Telegram Idempotency
 
-Nebula Kirana follows an **AI-first, tool-driven architecture**.
+Telegram updates are tracked to prevent duplicate processing.
 
-The Telegram chat is the user interface.
+```text
+Telegram Update
+      │
+      ▼
+Check update_id
+      │
+ ┌────┴────┐
+ ▼         ▼
+Existing   New
+ │         │
+ ▼         ▼
+Ignore    Process
+            │
+            ▼
+       Store update_id
+```
 
-The AI agent interprets natural-language requests and orchestrates domain-specific tools.
-
-Critical business rules are enforced inside the tool/database layer.
+Business operations can also use idempotency keys where required.
 
 ---
 
-## 🔷 High-Level Architecture
+# Architecture
+
+## High-Level Architecture
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         STORE OWNER                         │
 │                                                             │
-│               Natural Language Telegram Chat                │
-│                                                             │
-│  "Create a bill for 2 Maggi and 1 Tata Salt"               │
+│                 Natural Language Telegram                   │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     TELEGRAM LAYER                          │
-│                          grammY                              │
+│                     TELEGRAM / grammY                       │
 │                                                             │
-│  • Receive Telegram messages                                │
-│  • Identify Telegram user                                  │
-│  • Handle /start and /new                                  │
-│  • Send responses                                           │
-│  • Send PDF / PPTX files                                   │
-│  • Handle Telegram errors                                  │
+│  Receive messages • Identify user • Send responses/files    │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                       AI AGENT                              │
+│                         AI AGENT                            │
 │                                                             │
 │                 Vercel AI SDK + Gemini                      │
 │                                                             │
-│  • Understand user request                                 │
-│  • Select tools                                             │
-│  • Execute multi-step operations                           │
-│  • Ask clarification                                       │
-│  • Generate final response                                 │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               │ Tool Calls
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     DOMAIN TOOL LAYER                       │
-│                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌────────────────────┐ │
-│  │ Inventory   │  │ Billing     │  │ Khata              │ │
-│  │ Tools       │  │ Tools       │  │ Tools              │ │
-│  │             │  │             │  │                    │ │
-│  │ Stock       │  │ Create      │  │ Customer           │ │
-│  │ Receive     │  │ Edit        │  │ Credit             │ │
-│  │ Add Product │  │ Finalize    │  │ Payment            │ │
-│  │ Low Stock   │  │ Invoice     │  │ Balance            │ │
-│  └─────────────┘  └─────────────┘  └────────────────────┘ │
-│                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌────────────────────┐ │
-│  │ Analytics   │  │ Memory      │  │ Artifact           │ │
-│  │ Tools       │  │ Tools       │  │ Generators         │ │
-│  │             │  │             │  │                    │ │
-│  │ Daily Close │  │ Preferences │  │ Invoice PDF        │ │
-│  │ Sales       │  │ Persistent  │  │ Analysis PPTX      │ │
-│  │ Analysis    │  │ Memory      │  │                    │ │
-│  └─────────────┘  └─────────────┘  └────────────────────┘ │
+│  Understand → Decide → Tool Call → Observe → Respond       │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     DATABASE LAYER                          │
+│                       DOMAIN TOOLS                          │
 │                                                             │
-│                         SQLite                              │
-│                    better-sqlite3                           │
-│                                                             │
-│  products                                                   │
-│  bills                                                      │
-│  bill_items                                                 │
-│  stock_movements                                            │
-│  customers                                                  │
-│  khata_entries                                              │
-│  preferences                                                │
-│  telegram_updates                                           │
-│  agent_sessions                                             │
-│  idempotency_keys                                            │
+│ Inventory │ Billing │ Khata │ Analytics │ Memory            │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    ARTIFACT OUTPUT                          │
+│                     SQLITE DATABASE                         │
 │                                                             │
-│        ┌────────────────┐    ┌────────────────┐             │
-│        │ Invoice PDF    │    │ Analysis PPTX  │             │
-│        │ PDFKit         │    │ PptxGenJS      │             │
-│        └────────────────┘    └────────────────┘             │
-│                         │                                   │
-│                         ▼                                   │
-│                    Telegram User                            │
-└─────────────────────────────────────────────────────────────┘
+│ products • bills • bill_items • stock_movements             │
+│ customers • khata_entries • preferences                     │
+│ telegram_updates • agent_sessions • idempotency_keys        │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                  ┌────────────┴────────────┐
+                  ▼                         ▼
+           ┌──────────────┐          ┌──────────────┐
+           │  PDFKit      │          │ PptxGenJS    │
+           │ Invoice PDF  │          │ Analysis     │
+           └──────┬───────┘          └──────┬───────┘
+                  │                         │
+                  └────────────┬────────────┘
+                               ▼
+                           Telegram
 ```
 
 ---
 
-# 🧠 Agent-First Architecture
-
-The system does not depend on a large regex or `if/else` router.
-
-Instead:
-
-```text
-User Message
-     │
-     ▼
-AI Agent
-     │
-     ├──────────► Inventory Tools
-     │
-     ├──────────► Billing Tools
-     │
-     ├──────────► Khata Tools
-     │
-     ├──────────► Analytics Tools
-     │
-     └──────────► Memory Tools
-```
-
-The agent decides which tools are required based on the user's request.
-
----
-
-# 🔄 Request Lifecycle
-
-```text
-Telegram Message
-       │
-       ▼
-Telegram Bot
-       │
-       ▼
-Owner Identification
-       │
-       ▼
-AI Agent
-       │
-       ▼
-Request Understanding
-       │
-       ▼
-Tool Selection
-       │
-       ▼
-Business Tool
-       │
-       ▼
-Database Operation
-       │
-       ▼
-Validated Result
-       │
-       ▼
-AI Agent Response
-       │
-       ▼
-Telegram
-```
-
-For generated artifacts:
+# Agent Control Flow
 
 ```text
 User Request
@@ -616,184 +606,76 @@ User Request
 AI Agent
      │
      ▼
-Business Tool
+Tool Selection
      │
      ▼
-Artifact Generator
+Tool Execution
      │
-     ├──────► PDF
+     ▼
+Database / External Operation
      │
-     └──────► PPTX
-             │
-             ▼
-          Telegram
-```
-
----
-
-# 🧾 Billing Architecture
-
-```text
-                  CREATE BILL
-                       │
-                       ▼
-                  ┌─────────┐
-                  │  DRAFT  │
-                  └────┬────┘
-                       │
-              Add / Edit / Remove
-                       │
-                       ▼
-                UPDATED DRAFT
-                       │
-                       ▼
-                    CONFIRM
-                       │
-                       ▼
-                 VALIDATION
-                       │
-          ┌────────────┼────────────┐
-          │            │            │
-          ▼            ▼            ▼
-       Stock         GST         Payment
-       Check        Check         Check
-          │            │            │
-          └────────────┼────────────┘
-                       │
-                       ▼
-                   FINALIZE
-                       │
-                       ▼
-              ATOMIC STOCK UPDATE
-                       │
-                       ▼
-                INVOICE PDF
-                       │
-                       ▼
-                   TELEGRAM
-```
-
----
-
-# 📦 Inventory Architecture
-
-```text
-                    INVENTORY
-                        │
-          ┌─────────────┼─────────────┐
-          │             │             │
-          ▼             ▼             ▼
-     Stock Query   Receive Stock   Add Product
-          │             │             │
-          └─────────────┼─────────────┘
-                        │
-                        ▼
-                     SQLite
-                        │
-                        ▼
-                 Stock Movements
-```
-
-Product data includes:
-
-```text
-Product
- ├── Name
- ├── Unit
- ├── Cost Price
- ├── Selling Price
- ├── MRP
- ├── Quantity
- ├── Reorder Level
- ├── GST Rate
- ├── HSN Code
- └── Active Status
-```
-
----
-
-# 🛡️ Transaction & Safety Architecture
-
-Critical operations are handled by deterministic business tools.
-
-The AI model does not directly manipulate the database.
-
-```text
+     ▼
+Tool Result
+     │
+     ▼
 AI Agent
-    │
-    ▼
-Business Tool
-    │
-    ├── Validate Input
-    ├── Validate Business Rules
-    ├── Check Stock
-    ├── Calculate GST
-    └── Execute Transaction
-             │
-             ▼
-          SQLite
+     │
+     ▼
+User Response
 ```
+
+The model handles reasoning and orchestration.
+
+The tool layer handles deterministic business logic.
+
+The database is the source of truth for persistent business state.
 
 ---
 
-# 🔐 Atomic Billing Transaction
-
-During finalization:
+# Separation of Responsibilities
 
 ```text
-BEGIN TRANSACTION
-       │
-       ├── Validate Bill
-       │
-       ├── Validate Stock
-       │
-       ├── Calculate GST
-       │
-       ├── Record Payment
-       │
-       ├── Deduct Stock
-       │
-       ├── Record Stock Movement
-       │
-       └── Mark Bill Finalized
-                │
-                ▼
-          COMMIT TRANSACTION
+┌──────────────────────────────┐
+│          AI AGENT            │
+│                              │
+│ Understand request           │
+│ Select tools                 │
+│ Orchestrate workflow         │
+│ Ask clarification            │
+│ Explain results              │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│       BUSINESS TOOLS         │
+│                              │
+│ Validate inputs              │
+│ Enforce business rules       │
+│ Validate stock               │
+│ Calculate GST                │
+│ Execute transactions         │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│          DATABASE            │
+│                              │
+│ Persistent state             │
+│ Transactions                 │
+│ Constraints                  │
+│ Idempotency                  │
+└──────────────────────────────┘
 ```
 
-If a critical operation fails before commit, the transaction can be rolled back.
+This prevents critical business decisions from depending entirely on language-model output.
 
 ---
 
-# 🔁 Telegram Idempotency
+# Database Design
 
-Telegram updates are tracked to reduce duplicate processing.
+The project uses SQLite through `better-sqlite3`.
 
-```text
-Telegram Update
-       │
-       ▼
-Check update_id
-       │
-    ┌──┴──┐
-    │     │
-Already  New
-Processed Update
-    │     │
-    ▼     ▼
- Ignore Process
-          │
-          ▼
-     Store update_id
-```
-
-Business operations also use idempotency keys where required.
-
----
-
-# 🗃️ Database Architecture
-
-The SQLite database contains:
+Main tables:
 
 ```text
 products
@@ -808,25 +690,21 @@ agent_sessions
 idempotency_keys
 ```
 
-Relationships:
+Core relationships:
 
 ```text
 products
-    │
-    ├──────────► bill_items
-    │                 │
-    │                 ▼
-    │               bills
-    │
-    └──────────► stock_movements
-
+   │
+   ├──────────► bill_items ──────────► bills
+   │
+   └──────────► stock_movements
 
 customers
-    │
-    └──────────► khata_entries
+   │
+   └──────────► khata_entries
 ```
 
-Database features include:
+The database uses:
 
 * Foreign keys
 * Transactions
@@ -838,164 +716,26 @@ Database features include:
 
 ---
 
-# 📊 Analytics Architecture
+# Technology Stack
 
-```text
-                 SQLite
-                    │
-          ┌─────────┼─────────┐
-          │         │         │
-          ▼         ▼         ▼
-        Bills      Items     Stock
-          │         │         │
-          └─────────┼─────────┘
-                    │
-                    ▼
-                Analytics
-                    │
-             ┌──────┴──────┐
-             │             │
-             ▼             ▼
-        Daily Close   Sales Analysis
-             │             │
-             └──────┬──────┘
-                    ▼
-             Business Insights
-```
-
----
-
-# 📄 Artifact Architecture
-
-## Invoice PDF
-
-```text
-Billing Data
-     │
-     ▼
-Invoice Generator
-     │
-     ▼
-PDFKit
-     │
-     ▼
-GST Invoice PDF
-     │
-     ▼
-Telegram
-```
-
-## Analysis PPTX
-
-```text
-Sales Data
-     │
-     ▼
-Analytics Tool
-     │
-     ▼
-Deck Generator
-     │
-     ▼
-PptxGenJS
-     │
-     ▼
-PowerPoint File
-     │
-     ▼
-Telegram
-```
-
----
-
-# 🧠 Memory Architecture
-
-```text
-User
- │
- │ "Remember my shop name"
- ▼
-AI Agent
- │
- ▼
-Memory Tool
- │
- ▼
-preferences table
- │
- ▼
-Future Conversation
- │
- ▼
-Preference Retrieved
-```
-
-Preferences survive across conversations because they are persisted in SQLite.
-
----
-
-# 🔒 Separation of Responsibilities
-
-The architecture separates AI reasoning from deterministic business logic.
-
-```text
-┌────────────────────────────────────┐
-│              AI AGENT              │
-│                                    │
-│ • Understand request                │
-│ • Select tool                      │
-│ • Ask clarification                │
-│ • Explain result                   │
-└──────────────────┬─────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────┐
-│          BUSINESS TOOLS            │
-│                                    │
-│ • Validate inputs                  │
-│ • Apply business rules             │
-│ • Calculate GST                    │
-│ • Validate stock                   │
-│ • Execute transactions             │
-└──────────────────┬─────────────────┘
-                   │
-                   ▼
-┌────────────────────────────────────┐
-│             DATABASE               │
-│                                    │
-│ • Persistent state                 │
-│ • Transactions                     │
-│ • Constraints                      │
-│ • Idempotency                      │
-└────────────────────────────────────┘
-```
-
-### Core principle
-
-> **The model orchestrates; deterministic tools enforce.**
-
----
-
-# 🧰 Technology Stack
-
-| Technology     | Purpose                   |
+| Technology     | Role                      |
 | -------------- | ------------------------- |
-| TypeScript     | Application development   |
+| TypeScript     | Application language      |
 | Node.js        | Runtime                   |
-| Telegram       | User interface            |
-| grammY         | Telegram bot framework    |
+| Telegram       | Product interface         |
+| grammY         | Telegram integration      |
 | Vercel AI SDK  | Agent orchestration       |
-| Google Gemini  | AI model                  |
-| Zod            | Input validation          |
-| SQLite         | Persistent database       |
-| better-sqlite3 | SQLite integration        |
-| PDFKit         | Invoice PDF generation    |
+| Google Gemini  | LLM                       |
+| Zod            | Tool input validation     |
+| SQLite         | Persistent data store     |
+| better-sqlite3 | Database driver           |
+| PDFKit         | Invoice generation        |
 | PptxGenJS      | PowerPoint generation     |
 | dotenv         | Environment configuration |
 
 ---
 
-# 📁 Project Structure
+# Project Structure
 
 ```text
 nebula-supermarket-ops-agent/
@@ -1032,30 +772,95 @@ nebula-supermarket-ops-agent/
 ├── ARCHITECTURE.md
 ├── README.md
 ├── package.json
+├── package-lock.json
 └── tsconfig.json
 ```
 
 ---
 
-# 📱 Telegram Instructions
+# Installation
 
-The entire supermarket system can be controlled through Telegram.
+## Requirements
 
-Start:
+* Node.js
+* npm
+* Telegram account
+* Telegram Bot Token
+* Google Gemini API key
+
+## Clone
+
+```bash
+git clone <YOUR_PUBLIC_GITHUB_REPOSITORY_URL>
+cd nebula-supermarket-ops-agent
+```
+
+## Install Dependencies
+
+```bash
+npm install
+```
+
+## Environment Configuration
+
+Create a `.env` file:
+
+```env
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-3.6-flash
+
+SHOP_NAME=Nebula Kirana
+SHOP_GSTIN=33AAAAA0000A1Z5
+
+DB_PATH=./data/store.db
+```
+
+Never commit `.env` to GitHub.
+
+Only `.env.example` should be committed.
+
+## Initialize Database
+
+```bash
+npx tsx src/db/seed.ts
+```
+
+## Run
+
+```bash
+npm run dev
+```
+
+## TypeScript Check
+
+```bash
+npx tsc --noEmit
+```
+
+## Tests
+
+```bash
+npm test
+```
+
+---
+
+# Telegram Usage
+
+Start the bot:
 
 ```text
 /start
 ```
 
-Start a new bill:
+Create a new billing session:
 
 ```text
 /new
 ```
 
-However, users can also use natural language.
-
-### Inventory
+Inventory:
 
 ```text
 show me all products
@@ -1069,14 +874,14 @@ show low stock items
 How much Maggi is available?
 ```
 
-### Billing
+```text
+Add 20 Tata Salt to stock
+```
+
+Billing:
 
 ```text
 Create a bill for 2 Maggi and 1 Tata Salt
-```
-
-```text
-Remove Tata Salt
 ```
 
 ```text
@@ -1084,38 +889,42 @@ Change Maggi quantity to 3
 ```
 
 ```text
+Remove Tata Salt
+```
+
+```text
 Finalize the bill and pay by UPI
 ```
 
-### Stock
-
-```text
-Add 20 Tata Salt to stock
-```
-
-### Khata
+Khata:
 
 ```text
 Show Ramesh khata
 ```
 
 ```text
-Ramesh paid ₹500 by UPI
+Add ₹500 credit for Ramesh
 ```
 
-### Daily Close
+```text
+Ramesh paid ₹300 by UPI
+```
+
+Analytics:
 
 ```text
 Close today's business
 ```
 
-### Analytics
+```text
+Show today's sales analysis
+```
 
 ```text
 Generate sales analysis deck
 ```
 
-### Invoice
+Invoice:
 
 ```text
 Generate invoice PDF
@@ -1123,126 +932,12 @@ Generate invoice PDF
 
 ---
 
-# ⚙️ Installation & Setup
-
-## Requirements
-
-Install:
-
-* Node.js
-* npm
-* Telegram account
-* Telegram Bot Token
-* Google Gemini API key
-
----
-
-## 1. Clone Repository
-
-```bash
-git clone <YOUR_PUBLIC_GITHUB_REPOSITORY_URL>
-cd nebula-supermarket-ops-agent
-```
-
----
-
-## 2. Install Dependencies
-
-```bash
-npm install
-```
-
----
-
-## 3. Environment Variables
-
-Create:
-
-```text
-.env
-```
-
-Example:
-
-```env
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3.6-flash
-
-SHOP_NAME=Nebula Kirana
-SHOP_GSTIN=33AAAAA0000A1Z5
-
-DB_PATH=./data/store.db
-```
-
-### ⚠️ Security
-
-Never commit:
-
-```text
-.env
-```
-
-to GitHub.
-
-Never expose:
-
-* Telegram bot token
-* Gemini API key
-* Other credentials
-
-Only commit:
-
-```text
-.env.example
-```
-
----
-
-# 🗄️ Database Initialization
-
-Seed the supermarket database:
-
-```bash
-npx tsx src/db/seed.ts
-```
-
-This creates sample kirana inventory.
-
----
-
-# ▶️ Run the Bot
-
-```bash
-npm run dev
-```
-
-The bot will start listening for Telegram messages.
-
----
-
-# 🧪 Testing
-
-TypeScript validation:
-
-```bash
-npx tsc --noEmit
-```
-
-Run automated tests:
-
-```bash
-npm test
-```
-
----
-
-# 🔄 Complete Example Workflow
+# End-to-End Billing Example
 
 ```text
 User
  │
- │ Create a bill
+ │ "Create a bill for 2 Maggi and 1 Tata Salt"
  ▼
 AI Agent
  │
@@ -1252,19 +947,26 @@ Billing Tool
  ▼
 Draft Bill
  │
- │ Edit
+ │ "Change Maggi quantity to 3"
  ▼
 Updated Draft
  │
- │ Confirm
+ │ "Finalize and pay by UPI"
  ▼
-Finalize
+Validation
  │
- ├── Stock Check
+ ├── Product Validation
+ ├── Stock Validation
  ├── GST Calculation
- ├── Payment
- ├── Atomic Stock Deduction
- └── Stock Movement
+ └── Payment Validation
+ │
+ ▼
+Database Transaction
+ │
+ ├── Deduct Stock
+ ├── Record Stock Movement
+ ├── Record Payment
+ └── Finalize Bill
  │
  ▼
 Invoice PDF
@@ -1275,191 +977,66 @@ Telegram
 
 ---
 
-# 🎬 Demo Flow
+# Requirement Coverage
 
-The recommended demonstration covers:
+| Capability                   | Status |
+| ---------------------------- | ------ |
+| Telegram-only interface      | ✅      |
+| AI agent                     | ✅      |
+| Agent tool orchestration     | ✅      |
+| Natural-language interaction | ✅      |
+| Inventory management         | ✅      |
+| Stock query                  | ✅      |
+| Receive stock                | ✅      |
+| Add product                  | ✅      |
+| Low-stock detection          | ✅      |
+| Conversational billing       | ✅      |
+| Draft bill                   | ✅      |
+| Bill editing                 | ✅      |
+| Bill finalization            | ✅      |
+| Oversell protection          | ✅      |
+| Atomic stock deduction       | ✅      |
+| GST per item                 | ✅      |
+| HSN code                     | ✅      |
+| CGST + SGST                  | ✅      |
+| Cash / UPI / Card            | ✅      |
+| Khata / credit               | ✅      |
+| Daily close                  | ✅      |
+| Sales analysis               | ✅      |
+| Invoice PDF                  | ✅      |
+| PPTX analysis deck           | ✅      |
+| Persistent preferences       | ✅      |
+| SQLite persistence           | ✅      |
+| Telegram idempotency         | ✅      |
+| Transaction safety           | ✅      |
+
+---
+
+# Demo
+
+The recommended demo demonstrates the complete business workflow:
 
 ```text
 1. /start
-
-2. Show all products
-
-3. Show low-stock items
-
+2. Show inventory
+3. Check low-stock products
 4. Create a bill
-
-5. Edit the bill
-
+5. Edit the draft
 6. Finalize the bill
-
 7. Record payment
-
 8. Verify stock
-
 9. Generate invoice PDF
-
 10. Check Khata
-
-11. Daily close
-
-12. Sales analysis
-
+11. Run daily close
+12. Generate sales analysis
 13. Generate PPTX analysis deck
 ```
 
 ---
 
-# 📋 Requirement Coverage
+# Security
 
-| Requirement              | Status |
-| ------------------------ | ------ |
-| Telegram-only interface  | ✅      |
-| AI agent                 | ✅      |
-| Agent tool orchestration | ✅      |
-| Inventory management     | ✅      |
-| Stock query              | ✅      |
-| Low-stock detection      | ✅      |
-| Receive stock            | ✅      |
-| Add product              | ✅      |
-| Conversational billing   | ✅      |
-| Draft bill               | ✅      |
-| Bill editing             | ✅      |
-| Bill finalization        | ✅      |
-| Atomic stock deduction   | ✅      |
-| Oversell protection      | ✅      |
-| GST per item             | ✅      |
-| HSN code                 | ✅      |
-| CGST + SGST              | ✅      |
-| Cash / UPI / Card        | ✅      |
-| Khata / credit           | ✅      |
-| Daily close              | ✅      |
-| Sales analysis           | ✅      |
-| Invoice PDF              | ✅      |
-| PPTX analysis deck       | ✅      |
-| Persistent preferences   | ✅      |
-| SQLite persistence       | ✅      |
-| Telegram idempotency     | ✅      |
-| Transaction protection   | ✅      |
-| README documentation     | ✅      |
-| Demo recording           | 🎥     |
-| Public GitHub repository | 🔗     |
-
----
-
-# 🛡️ Important Business Rules
-
-The system follows these rules:
-
-### Stock
-
-Stock cannot become negative.
-
-### Billing
-
-Draft bills do not reduce inventory.
-
-### Finalization
-
-Inventory is updated only after successful bill finalization.
-
-### GST
-
-GST is calculated using the product's configured GST rate.
-
-### Payments
-
-Only Cash, UPI and Card are supported.
-
-### Ambiguity
-
-The agent asks for clarification when required information is unclear.
-
-### Database
-
-Critical operations are performed through validated business tools and database transactions.
-
----
-
-# 🎯 Design Philosophy
-
-Nebula Kirana follows three core principles.
-
-## 1. Chat is the Product
-
-The user should be able to perform supermarket operations directly through conversation.
-
-## 2. AI Orchestrates
-
-The AI understands the user's intent and chooses the appropriate tools.
-
-## 3. Tools Enforce
-
-Business-critical rules are implemented deterministically inside tools and the database.
-
-This prevents important operations such as stock deduction and financial calculations from depending entirely on model reasoning.
-
----
-
-# 🚀 Future Enhancements
-
-Possible future improvements include:
-
-* Weekly scheduled sales decks
-* Reorder suggestions using sales velocity
-* Batch and expiry tracking
-* FEFO inventory handling
-* Khata payment reminders
-* Voice-note orders
-* Tamil / Hindi multilingual support
-* Barcode scanning
-* Product photo recognition
-* Advanced forecasting
-
----
-
-# 🔗 Project Links
-
-## Telegram Bot
-
-```text
-<YOUR_TELEGRAM_BOT_USERNAME>
-```
-
-## GitHub
-
-```text
-<YOUR_PUBLIC_GITHUB_REPOSITORY_URL>
-```
-
-## Demo Recording
-
-```text
-<YOUR_DEMO_VIDEO_LINK>
-```
-
----
-
-# 👨‍💻 Project Information
-
-**Project:** Nebula Kirana — Supermarket Ops Agent
-
-**Interface:** Telegram
-
-**AI:** Google Gemini
-
-**Agent Framework:** Vercel AI SDK
-
-**Database:** SQLite
-
-**Language:** TypeScript / Node.js
-
-**Artifacts:** PDF + PPTX
-
----
-
-# 🔐 Submission Security
-
-Before making the repository public, verify that the repository does NOT contain:
+The public repository must not contain:
 
 ```text
 .env
@@ -1467,28 +1044,83 @@ API keys
 Telegram bot tokens
 Passwords
 Private credentials
-Database files containing sensitive information
+Sensitive production database files
 ```
 
-Use:
+Use environment variables for secrets.
+
+Example configuration should be provided through:
 
 ```text
 .env.example
 ```
 
-for configuration documentation.
+---
+
+# Future Enhancements
+
+Possible extensions include:
+
+* Sales-velocity based reorder suggestions
+* Scheduled weekly analysis decks
+* Batch and expiry tracking
+* FEFO inventory management
+* Automated Khata reminders
+* Voice-note ordering
+* Tamil / Hindi multilingual interaction
+* Barcode scanning
+* Product image recognition
+* Demand forecasting
 
 ---
 
-# 📌 Final Note
+# Project Links
 
-Nebula Kirana demonstrates an AI-first approach to supermarket operations where a store owner can manage inventory, billing, payments, customer credit, daily closing, analytics and business documents through a single conversational Telegram interface.
+**GitHub**
+
+<YOUR_PUBLIC_GITHUB_REPOSITORY_URL>
+
+**Telegram Bot**
+
+<YOUR_TELEGRAM_BOT_USERNAME>
+
+**Demo Video**
+
+<YOUR_DEMO_VIDEO_LINK>
+
+---
+
+# Project Summary
+
+Nebula Kirana is a practical demonstration of combining **AI agents with real backend engineering**.
+
+The system does not stop at generating text responses. The agent interacts with deterministic tools that operate on persistent business data and perform real workflows such as inventory updates, billing, GST calculation, payment recording, customer credit management, daily closing, PDF generation, and PowerPoint reporting.
+
+The architecture deliberately separates AI reasoning from business-critical operations:
+
+```text
+AI
+↓
+Orchestration
+↓
+Tools
+↓
+Business Rules
+↓
+Database
+↓
+Real Business Result
+```
+
+This makes the project a demonstration of:
+
+**AI Engineering + Agentic Systems + Backend Engineering + Database Engineering + Financial Logic + Automation + API Integration.**
 
 > **The model orchestrates. The tools enforce. The database persists.**
 
 ```
 
-**Idhu dhaan one-file final README.** Existing `README.md`-a full replace pannidu. Assignment requirements-la irukkura capabilities + architecture + deliverables ellame cover pannirukku. :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
+**Idhu dhaan bro namma final professional README.** Un uploaded README-la irukkura actual project capabilities/architecture-ai base pannithaan structure pannirukken. :contentReference[oaicite:0]{index=0}
 
-**Next:** README save pannitu, `.env` GitHub-ku pogama irukkaa check pannitu **public GitHub upload** pannuvom.
+Idha paste pannina reviewer-ku **“chatbot project”** nu illa — **AI Agent + Backend + DB + business logic + automation project** nu first impression varum.
 ```
